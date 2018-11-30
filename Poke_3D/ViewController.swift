@@ -32,28 +32,28 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         super.viewWillAppear(animated)
         
         // Create a session configuration
-//        let configuration = ARImageTrackingConfiguration()
+        let configuration = ARImageTrackingConfiguration()
+
+        if let imageToTruck = ARReferenceImage.referenceImages(inGroupNamed: "Pockemon Cards", bundle: Bundle.main) {
+
+                configuration.trackingImages = imageToTruck
+                configuration.maximumNumberOfTrackedImages = 2
+
+                print("Images successfully added")
+
+        }
         
-//        if let imageToTruck = ARReferenceImage.referenceImages(inGroupNamed: "Pockemon Cards", bundle: Bundle.main) {
+//        let configuration = ARWorldTrackingConfiguration() // changed for detect more images
 //
-//                configuration.trackingImages = imageToTruck
-//                configuration.maximumNumberOfTrackedImages = 1
 //
-//                print("Images successfully added")
+//        if let imageToTruck = ARReferenceImage.referenceImages(inGroupNamed: "Pockemon Cards", bundle: Bundle.main) { //tracking images
+//
+//            configuration.detectionImages = imageToTruck  // changed for detect more images
+//            configuration.maximumNumberOfTrackedImages = 2
+//
+//            print("Images successfully added")
 //
 //        }
-        
-        let configuration = ARWorldTrackingConfiguration() // changed for detect more images
-        
-        
-        if let imageToTruck = ARReferenceImage.referenceImages(inGroupNamed: "Pockemon Cards", bundle: Bundle.main) {
-            
-            configuration.detectionImages = imageToTruck  // changed for detect more images
-            configuration.maximumNumberOfTrackedImages = 2
-            
-            print("Images successfully added")
-            
-        }
 
         // Run the view's session
         sceneView.session.run(configuration)
@@ -69,9 +69,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
    
     func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
         
-        let node = SCNNode()
+        let node = SCNNode() // brand new 3D object
         
-        if let imageAnchor = anchor as? ARImageAnchor {
+        if let imageAnchor = anchor as? ARImageAnchor { // checking if the image is detected
             
             let plane = SCNPlane(width: imageAnchor.referenceImage.physicalSize.width, height: imageAnchor.referenceImage.physicalSize.height)
             
@@ -83,17 +83,41 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
             node.addChildNode(planeNode)
             
-            if let pokeScene = SCNScene(named: "art.scnassets/eevee.scn") {
+            if imageAnchor.referenceImage.name == "eevee" {
                 
-                if let pokeNode = pokeScene.rootNode.childNodes.first {
+                if let pokeScene = SCNScene(named: "art.scnassets/eevee.scn") {
                     
-                    pokeNode.eulerAngles.x = .pi / 2
-                    
-                    planeNode.addChildNode(pokeNode)
+                    if let pokeNode = pokeScene.rootNode.childNodes.first {
+                        
+                        pokeNode.eulerAngles.x = .pi / 2
+                        
+                        planeNode.addChildNode(pokeNode)
+                        
+                    }
                     
                 }
                 
             }
+            
+            
+            if imageAnchor.referenceImage.name == "oddish" {
+                
+                if let pokeScene = SCNScene(named: "art.scnassets/oddish.scn") {
+                    
+                    if let pokeNode = pokeScene.rootNode.childNodes.first {
+                        
+                        pokeNode.eulerAngles.x = .pi / 2
+                        
+                        planeNode.addChildNode(pokeNode)
+                        
+                    }
+                    
+                }
+                
+            }
+
+            
+           
             
         }
         
